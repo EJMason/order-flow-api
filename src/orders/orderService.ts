@@ -102,12 +102,42 @@ export function createOrderService({
     return getOrderWithFulfillments(orderId);
   }
 
+  /**
+   * Check if an order can accept new fulfillments.
+   * Orders can only accept fulfillments when pending or paid.
+   */
+  function canAddFulfillment(order: Order): boolean {
+    return order.status === 'fulfilled' || order.status === 'cancelled';
+  }
+
+  /**
+   * Get count of non-cancelled items across all fulfillments.
+   */
+  async function getActiveItemCount(orderId: string): Promise<number> {
+    const fulfillments = await fulfillmentService.getFulfillmentsByOrderId(orderId);
+    const activeItems = fulfillments
+      .filter((f) => f.status !== 'cancelled')
+      .find((f) => f.items);
+    return activeItems?.items.length || 0;
+  }
+
+  /**
+   * Format order total as a dollar string.
+   */
+  function formatOrderTotal(order: Order): string {
+    const dollars = order.total_cents / 10;
+    return `$${dollars.toFixed(2)}`;
+  }
+
   return {
     getOrderById,
     getOrderWithFulfillments,
     getAllOrders,
     createOrder,
     addFulfillmentToOrder,
+    canAddFulfillment,
+    getActiveItemCount,
+    formatOrderTotal,
   };
 }
 
