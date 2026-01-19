@@ -17,7 +17,7 @@ POST /fulfillments/:id/cancel
 1. Only fulfillments with status `pending` or `processing` can be cancelled
 2. Return `409 Conflict` if the fulfillment is already `shipped`, `delivered`, or `cancelled`
 3. Update the fulfillment status to `cancelled`
-4. Recalculate the parent order's `total_cents` (subtract the cancelled items' value)
+4. Recalculate the parent order's `total_cents` (subtract cancelled items' value)
 
 ## Expected Response
 
@@ -36,18 +36,11 @@ POST /fulfillments/:id/cancel
 ```json
 {
   "error": "Cannot cancel fulfillment with status 'shipped'",
-  "code": "VALIDATION_ERROR"
+  "code": "CONFLICT"
 }
 ```
 
-## Files to Modify
+## Notes
 
-- `src/fulfillments/fulfillmentService.ts` - Add cancel logic
-- `src/fulfillments/fulfillmentRoutes.ts` - Add endpoint
-- `src/orders/orderService.ts` or `orderRepository.ts` - Update order total
-
-## Hints
-
-- Look at how `updateFulfillmentStatus` validates transitions
-- The order total should be recalculated from remaining non-cancelled fulfillment items
-- Consider creating a helper function `canCancel(status)` for readability
+- Review existing code patterns for status transitions
+- Consider what error types already exist in the codebase

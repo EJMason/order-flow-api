@@ -37,15 +37,3 @@ GET /orders/:id/summary
 2. Include rep's full name (first + last)
 3. Count total fulfillments and total items across all fulfillments
 4. Break down fulfillment counts by status
-
-## Files to Modify
-
-- `src/orders/orderService.ts` - Add `getOrderSummary` function
-- `src/orders/orderRoutes.ts` - Add endpoint
-- `src/shared/models.ts` - (Optional) Add `OrderSummary` type
-
-## Hints
-
-- You'll need to join data from orders, reps, and fulfillments
-- Consider whether to do aggregation in SQL or in JavaScript
-- Look at existing `getOrderWithFulfillments` for reference

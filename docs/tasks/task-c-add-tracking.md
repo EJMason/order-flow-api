@@ -46,15 +46,3 @@ PATCH /fulfillments/:id/tracking
   "code": "VALIDATION_ERROR"
 }
 ```
-
-## Files to Modify
-
-- `src/fulfillments/fulfillmentSchemas.ts` - Add Zod schema
-- `src/fulfillments/fulfillmentRepository.ts` - Add `updateTrackingNumber` function
-- `src/fulfillments/fulfillmentService.ts` - Add business logic
-- `src/fulfillments/fulfillmentRoutes.ts` - Add endpoint
-
-## Hints
-
-- Use Zod v4 syntax: `z.string().min(1, 'Tracking number is required')`
-- Pattern similar to `updateFulfillmentStatus`

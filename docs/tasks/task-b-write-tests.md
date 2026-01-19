@@ -22,47 +22,11 @@ Write tests for `createOrder`:
 
 ## Requirements
 
-- Use the **AAA pattern** (Arrange-Act-Assert)
+- Use the AAA pattern (Arrange-Act-Assert)
 - Mock the repositories (don't hit the database)
-- Use Vitest (`describe`, `it`, `expect`, `vi.fn()`)
+- Use Vitest
 
-## Example Structure
+## Notes
 
-```typescript
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { createOrderService } from '../../orders/orderService.js';
-// ... imports
-
-describe('OrderService', () => {
-  // Setup mocks
-  const mockOrderRepository = { ... };
-  const mockFulfillmentService = { ... };
-  // etc.
-
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
-
-  describe('createOrder', () => {
-    it('should create order with correct total', async () => {
-      // Arrange
-      // Act
-      // Assert
-    });
-
-    it('should throw NotFoundError when rep does not exist', async () => {
-      // ...
-    });
-
-    it('should calculate total as quantity × price', async () => {
-      // ...
-    });
-  });
-});
-```
-
-## Hints
-
-- Look at `src/test/unit/repService.test.ts` for an example
-- Mock `fulfillmentService.createFulfillment` to return a fulfillment with items
-- The total should be sum of (quantity × unit_price_cents) for all items
+- Review existing unit tests for patterns
+- Consider what dependencies need to be mocked
