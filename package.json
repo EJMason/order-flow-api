@@ -13,14 +13,14 @@
     "test:run": "vitest run",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "db:seed": "tsx scripts/seed.ts"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
     "awilix": "^12.0.5",
-    "awilix-express": "^9.0.2",
     "dotenv": "^17.2.3",
     "express": "^5.2.1",
     "mitt": "^3.0.1",

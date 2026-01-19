@@ -48,3 +48,22 @@ src/
 - Functions: camelCase
 - Types: PascalCase
 - Constants: SCREAMING_SNAKE_CASE
+
+# Validation (Zod v4)
+This project uses Zod v4. Use top-level format validators instead of method chains:
+```typescript
+// ✅ Correct (Zod v4)
+z.email()
+z.url()
+z.uuid()
+
+// ❌ Deprecated
+z.string().email()
+z.string().url()
+z.string().uuid()
+```
+
+For nullable/optional emails: `z.email().nullable().optional()`
+
+# Documentation Lookup
+Always use Context7 MCP (`resolve-library-id` then `query-docs`) when you have questions about package APIs or need to verify current syntax.
