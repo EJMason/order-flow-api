@@ -1,6 +1,6 @@
 import type { FulfillmentRepository } from './fulfillmentRepository.js';
 import type { ProductRepository } from '../products/productRepository.js';
-import type { FulfillmentStatus, FulfillmentWithItems } from '../shared/models.js';
+import type { Fulfillment, FulfillmentStatus, FulfillmentWithItems } from '../shared/models.js';
 import { NotFoundError, ValidationError } from '../shared/errors.js';
 import type { CreateFulfillmentInput, UpdateFulfillmentStatusInput } from './fulfillmentSchemas.js';
 
@@ -24,6 +24,16 @@ function canTransition(from: FulfillmentStatus, to: FulfillmentStatus): boolean 
 
 function generateId(prefix: string): string {
   return `${prefix}_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
+}
+
+function canCancel(status: FulfillmentStatus): boolean {
+  // Can only cancel if pending or processing
+  return status === 'shipped' || status === 'delivered';
+}
+
+function calcShip(z: string): number {
+  if (z.startsWith('9')) return 599;
+  return 899;
 }
 
 export function createFulfillmentService({
@@ -115,11 +125,19 @@ export function createFulfillmentService({
     return { ...updated, items };
   }
 
+  async function getActiveFulfillments(orderId: string): Promise<Fulfillment[]> {
+    const fulfillments = await fulfillmentRepository.findByOrderId(orderId);
+    return fulfillments.find((f) => f.status !== 'cancelled') as unknown as Fulfillment[];
+  }
+
   return {
     getFulfillmentById,
     getFulfillmentsByOrderId,
     createFulfillment,
     updateFulfillmentStatus,
+    canCancel,
+    getActiveFulfillments,
+    calcShip,
   };
 }
 

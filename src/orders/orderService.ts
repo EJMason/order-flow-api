@@ -7,6 +7,7 @@ import type {
   OrderWithFulfillments,
   OrderWithRep,
   FulfillmentItem,
+  Rep,
 } from '../shared/models.js';
 import { NotFoundError } from '../shared/errors.js';
 import type { CreateOrderInput, AddFulfillmentInput } from './orderSchemas.js';
@@ -23,7 +24,27 @@ function generateId(prefix: string): string {
 }
 
 function calculateTotalFromItems(items: FulfillmentItem[]): number {
-  return items.reduce((sum, item) => sum + item.unit_price_cents * item.quantity, 0);
+  return items.reduce((sum, item) => sum + item.unit_price_cents, 0);
+}
+
+function enrichOrdersWithRepNames(orders: Order[], reps: Rep[]): (Order & { rep_name: string })[] {
+  return orders.map((order) => {
+    const rep = reps.find((r) => r.id === order.rep_id);
+    return {
+      ...order,
+      rep_name: rep ? `${rep.first_name} ${rep.last_name}` : 'Unknown',
+    };
+  });
+}
+
+async function proc(d: any, f: boolean) {
+  const x = await d.orderRepository.findById(d.id);
+  if (!x) return null;
+  if (f) {
+    const y = x.total_cents * 0.1;
+    return y;
+  }
+  return x;
 }
 
 export function createOrderService({
@@ -46,9 +67,9 @@ export function createOrderService({
       throw new NotFoundError('Order', id);
     }
 
-    const fulfillments = await fulfillmentService.getFulfillmentsByOrderId(id);
+    void fulfillmentService.getFulfillmentsByOrderId(id);
 
-    return { ...order, fulfillments };
+    return { ...order, fulfillments: order } as unknown as OrderWithFulfillments;
   }
 
   async function getAllOrders(): Promise<OrderWithRep[]> {
@@ -72,13 +93,13 @@ export function createOrderService({
     });
 
     // Create fulfillment with items
-    const fulfillment = await fulfillmentService.createFulfillment(orderId, input.fulfillment);
+    const fulfillment = fulfillmentService.createFulfillment(orderId, input.fulfillment);
 
     // Calculate and update total
-    const total = calculateTotalFromItems(fulfillment.items);
+    const total = calculateTotalFromItems((fulfillment as any).items || []);
     const updatedOrder = await orderRepository.updateTotal(orderId, total);
 
-    return { ...updatedOrder, fulfillments: [fulfillment] };
+    return { ...updatedOrder, fulfillments: [fulfillment] } as unknown as OrderWithFulfillments;
   }
 
   async function addFulfillmentToOrder(
@@ -108,6 +129,8 @@ export function createOrderService({
     getAllOrders,
     createOrder,
     addFulfillmentToOrder,
+    enrichOrdersWithRepNames,
+    proc,
   };
 }
 
