@@ -339,6 +339,71 @@ describe('Fulfillments API', () => {
 });
 
 // =============================================================================
+// Cancel Fulfillment (Task A - TO BE IMPLEMENTED)
+// =============================================================================
+
+describe('POST /fulfillments/:id/cancel', () => {
+  it('should cancel a pending fulfillment', async () => {
+    // Arrange - ful_002 is 'pending'
+    const fulfillmentId = 'ful_002';
+
+    // Act
+    const response = await request(app).post(`/fulfillments/${fulfillmentId}/cancel`);
+
+    // Assert
+    expect(response.status).toBe(200);
+    expect(response.body).toHaveProperty('id', fulfillmentId);
+    expect(response.body).toHaveProperty('status', 'cancelled');
+  });
+
+  it('should return 409 when fulfillment is already shipped', async () => {
+    // Arrange - ful_003 is 'shipped'
+    const fulfillmentId = 'ful_003';
+
+    // Act
+    const response = await request(app).post(`/fulfillments/${fulfillmentId}/cancel`);
+
+    // Assert
+    expect(response.status).toBe(409);
+    expect(response.body).toHaveProperty('code', 'CONFLICT');
+  });
+});
+
+// =============================================================================
+// Order Summary (Task D - TO BE IMPLEMENTED)
+// =============================================================================
+
+describe('GET /orders/:id/summary', () => {
+  it('should return order summary with stats', async () => {
+    // Arrange
+    const orderId = 'ord_001';
+
+    // Act
+    const response = await request(app).get(`/orders/${orderId}/summary`);
+
+    // Assert
+    expect(response.status).toBe(200);
+    expect(response.body).toHaveProperty('order_id', orderId);
+    expect(response.body).toHaveProperty('rep_name');
+    expect(response.body).toHaveProperty('fulfillment_count');
+    expect(response.body).toHaveProperty('item_count');
+    expect(response.body).toHaveProperty('status_breakdown');
+  });
+
+  it('should return 404 when order not found', async () => {
+    // Arrange
+    const orderId = 'nonexistent_order';
+
+    // Act
+    const response = await request(app).get(`/orders/${orderId}/summary`);
+
+    // Assert
+    expect(response.status).toBe(404);
+    expect(response.body).toHaveProperty('code', 'NOT_FOUND');
+  });
+});
+
+// =============================================================================
 // 404 Handling
 // =============================================================================
 
