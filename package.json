@@ -1,0 +1,40 @@
+{
+  "name": "interview-order-api",
+  "version": "1.0.0",
+  "description": "Technical interview exercise - Order fulfillment API",
+  "type": "module",
+  "engines": {
+    "node": ">=24.0.0"
+  },
+  "scripts": {
+    "dev": "tsx watch src/server.ts",
+    "start": "node --import tsx src/server.ts",
+    "test": "vitest",
+    "test:run": "vitest run",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "typecheck": "tsc --noEmit"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "awilix": "^12.0.5",
+    "awilix-express": "^9.0.2",
+    "dotenv": "^17.2.3",
+    "express": "^5.2.1",
+    "mitt": "^3.0.1",
+    "postgres": "^3.4.8",
+    "zod": "^4.3.5"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.6",
+    "@types/node": "^25.0.9",
+    "@types/supertest": "^6.0.3",
+    "prettier": "^3.8.0",
+    "supertest": "^7.2.2",
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3",
+    "vitest": "^4.0.17"
+  }
+}

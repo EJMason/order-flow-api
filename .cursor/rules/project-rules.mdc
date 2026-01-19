@@ -1,0 +1,50 @@
+---
+description: Project conventions for interview-order-api
+globs: ["src/**/*.ts", "scripts/**/*.ts"]
+---
+
+# Module System
+- ESM only (import/export)
+- Use `.js` extension in imports even for `.ts` files (Node ESM resolution)
+
+# Dependency Injection
+Factory function pattern with Awilix:
+```typescript
+export function createSomeService({ dependency }: Dependencies) {
+  async function doThing() {
+    // implementation
+  }
+
+  return { doThing };
+}
+
+export type SomeService = ReturnType<typeof createSomeService>;
+```
+
+Do NOT use classes. Do NOT use default exports for services.
+
+# Folder Structure
+Organize by feature:
+```
+src/
+├── [feature]/
+│   ├── [feature]Routes.ts
+│   ├── [feature]Service.ts
+│   ├── [feature]Repository.ts
+│   └── [feature]Schemas.ts
+├── shared/
+├── container.ts
+├── app.ts
+└── server.ts
+```
+
+# Database
+- Use `postgres` package (porsager)
+- Tagged templates: sql`SELECT * FROM x WHERE id = ${id}`
+- All DB access through repository functions
+
+# Naming
+- Files: camelCase
+- Functions: camelCase
+- Types: PascalCase
+- Constants: SCREAMING_SNAKE_CASE
